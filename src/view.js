@@ -72,6 +72,7 @@ export default class View {
         this.context.textBaseline = 'middle';
         this.context.fillText('GAME OVER', this.width / 2, this.height / 2 - 48);
         this.context.fillText(`Score: ${score}`, this.width / 2, this.height / 2);
+        this.context.fillText('Press ENTER to Restart', this.width / 2, this.height / 2 + 48);
     }
 
     clearScreen() {
@@ -84,8 +85,8 @@ export default class View {
         this.context.fillStyle = 'white';
         this.context.font = '14px "Press Start 2P"';
 
-        this.context.fillText(`Level: ${score}`, this.panelX, this.panelY);
-        this.context.fillText(`Level: ${lines}`, this.panelX, this.panelY + 24);
+        this.context.fillText(`Score: ${score}`, this.panelX, this.panelY);
+        this.context.fillText(`Lines: ${lines}`, this.panelX, this.panelY + 24);
         this.context.fillText(`Level: ${level}`, this.panelX, this.panelY + 48);
         this.context.fillText('Next:', this.panelX, this.panelY + 96);
 
