@@ -4,6 +4,7 @@ body {
 }
 
 #root {
+    font-family: 'Press Start 2P', Consolas, monospace;
     padding: 3rem 0 0;
     text-align: center;
 }
@@ -16,5 +17,4 @@ body {
 #root canvas {
     display: block;
     margin: 0 auto;
-    border: 4px solid white;
 }

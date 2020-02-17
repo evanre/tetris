@@ -8,9 +8,9 @@ export default class Game {
 
     score = 0;
 
-    lines = 19;
+    lines = 0;
 
-    playField = this.createPlayField(); // 2d array 10*20 of zeros
+    playField = Game.createPlayField(); // 2d array 10*20 of zeros
 
     activePiece = Game.createPiece();
 
@@ -21,16 +21,8 @@ export default class Game {
     }
 
     getState() {
-        const playField = this.createPlayField();
         const { y: pieceY, x: pieceX, blocks } = this.activePiece;
-
-        for (let y = 0; y < this.playField.length; y += 1) {
-            playField[y] = [];
-
-            for (let x = 0; x < this.playField[y].length; x += 1) {
-                playField[y][x] = this.playField[y][x];
-            }
-        }
+        const playField = this.playField.map((arr) => arr.slice(0));
 
         for (let y = 0; y < blocks.length; y += 1) {
             for (let x = 0; x < blocks[y].length; x += 1) {
@@ -40,7 +32,13 @@ export default class Game {
             }
         }
 
-        return { playField };
+        return {
+            score: this.score,
+            level: this.level,
+            lines: this.level,
+            nextPiece: this.nextPiece,
+            playField,
+        };
     }
 
     static createPlayField() {
@@ -49,47 +47,47 @@ export default class Game {
 
     static createPiece() {
         const index = Math.floor(Math.random() * 7);
-        const piece = {};
-
-        piece.blocks = {
-            I: [
-                [0, 0, 0, 0],
-                [1, 1, 1, 1],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0],
-            ],
-            J: [
-                [0, 0, 0],
-                [2, 2, 2],
-                [0, 0, 2],
-            ],
-            L: [
-                [0, 0, 0],
-                [3, 3, 3],
-                [3, 0, 0],
-            ],
-            O: [
-                [0, 0, 0, 0],
-                [0, 4, 4, 0],
-                [0, 4, 4, 0],
-                [0, 0, 0, 0],
-            ],
-            S: [
-                [0, 0, 0],
-                [0, 5, 5],
-                [5, 5, 0],
-            ],
-            T: [
-                [0, 0, 0],
-                [6, 6, 6],
-                [0, 6, 0],
-            ],
-            Z: [
-                [0, 0, 0],
-                [7, 7, 0],
-                [0, 7, 7],
-            ],
-        }['IJLOSTZ'[index]];
+        const piece = {
+            blocks: {
+                I: [
+                    [0, 0, 0, 0],
+                    [1, 1, 1, 1],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                ],
+                J: [
+                    [0, 0, 0],
+                    [2, 2, 2],
+                    [0, 0, 2],
+                ],
+                L: [
+                    [0, 0, 0],
+                    [3, 3, 3],
+                    [3, 0, 0],
+                ],
+                O: [
+                    [0, 0, 0, 0],
+                    [0, 4, 4, 0],
+                    [0, 4, 4, 0],
+                    [0, 0, 0, 0],
+                ],
+                S: [
+                    [0, 0, 0],
+                    [0, 5, 5],
+                    [5, 5, 0],
+                ],
+                T: [
+                    [0, 0, 0],
+                    [6, 6, 6],
+                    [0, 6, 0],
+                ],
+                Z: [
+                    [0, 0, 0],
+                    [7, 7, 0],
+                    [0, 7, 7],
+                ],
+            }['IJLOSTZ'[index]],
+        };
 
         if (!piece.blocks) {
             throw new Error('Undefined piece!');

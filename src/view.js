@@ -19,43 +19,101 @@ export default class View {
         this.canvas.height = this.height;
         this.context = this.canvas.getContext('2d');
 
-        this.blockWidth = this.width / columns;
-        this.blockHeight = this.height / rows;
+        this.playFieldBorderWidth = 4;
+        this.playFieldX = this.playFieldBorderWidth;
+        this.playFieldY = this.playFieldBorderWidth;
+        this.playFieldWidth = (this.width * 2) / 3;
+        this.playFieldHeight = this.height;
+        this.playFieldInnerWidth = this.playFieldWidth - this.playFieldBorderWidth * 2;
+        this.playFieldInnerHeight = this.playFieldHeight - this.playFieldBorderWidth * 2;
+
+        this.blockWidth = this.playFieldInnerWidth / columns;
+        this.blockHeight = this.playFieldInnerHeight / rows;
+
+        this.panelX = this.playFieldWidth + 10;
+        this.panelY = 0;
+        this.panelWidth = this.width / 3;
+        this.panelHeight = this.height;
 
         this.element.appendChild(this.canvas);
     }
 
-    render({ playField }) {
+    render(state) {
         this.clearScreen();
-        this.renderPlayField(playField);
+        this.renderPlayField(state);
+        this.renderPanel(state);
     }
 
     clearScreen() {
         this.context.clearRect(0, 0, this.width, this.height);
     }
 
-    renderPlayField(playField) {
+    renderPanel({ level, score, lines, nextPiece: { blocks } }) {
+        this.context.textAlign = 'start';
+        this.context.textBaseline = 'top';
+        this.context.fillStyle = 'white';
+        this.context.font = '14px "Press Start 2P"';
+
+        this.context.fillText(`Level: ${score}`, this.panelX, this.panelY);
+        this.context.fillText(`Level: ${lines}`, this.panelX, this.panelY + 24);
+        this.context.fillText(`Level: ${level}`, this.panelX, this.panelY + 48);
+        this.context.fillText('Next:', this.panelX, this.panelY + 96);
+
+        this.renderEntity(blocks);
+    }
+
+    renderPlayField({ playField }) {
         for (let y = 0; y < playField.length; y += 1) {
-            const line = playField[y];
-
-            for (let x = 0; x < line.length; x += 1) {
-                const block = line[x];
-
+            for (let x = 0; x < playField[y].length; x += 1) {
+                const block = playField[y][x];
                 if (block) {
+                    const {
+                        blockWidth: width,
+                        blockHeight: height,
+                        playFieldX: pfX,
+                        playFieldY: pfY,
+                    } = this;
                     this.renderBlock(
-                        x * this.blockWidth,
-                        y * this.blockHeight,
-                        this.blockWidth,
-                        this.blockHeight,
-                        View.colors[block],
+                        pfX + (x * width),
+                        pfY + (y * height),
+                        width,
+                        height,
+                        block,
+                    );
+                }
+            }
+        }
+
+        this.context.strokeStyle = 'white';
+        this.context.lineWidth = this.playFieldBorderWidth;
+        this.context.strokeRect(0, 0, this.playFieldWidth, this.playFieldHeight);
+    }
+
+    renderEntity(blocks) {
+        for (let y = 0; y < blocks.length; y += 1) {
+            for (let x = 0; x < blocks[y].length; x += 1) {
+                const block = blocks[y][x];
+                if (block) {
+                    const {
+                        blockWidth: width,
+                        blockHeight: height,
+                        panelX: pX,
+                        panelY: pY,
+                    } = this;
+                    this.renderBlock(
+                        pX + (x * width * 0.5),
+                        pY + 100 + (y * height * 0.5),
+                        width * 0.5,
+                        height * 0.5,
+                        block,
                     );
                 }
             }
         }
     }
 
-    renderBlock(x, y, width, height, color) {
-        this.context.fillStyle = color;
+    renderBlock(x, y, width, height, block) {
+        this.context.fillStyle = View.colors[block];
         this.context.strokeStyle = 'black';
         this.context.lineWidth = 2;
 
