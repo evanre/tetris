@@ -14,6 +14,16 @@ export default class Game {
         return Math.floor(this.lines * 0.1);
     }
 
+    reset() {
+        this.score = 0;
+        this.lines = 0;
+        this.topOut = false;
+        // 2d array 10*20 of zeros
+        this.playField = Array.from(Array(20), () => new Array(10).fill(0));
+        this.activePiece = Game.createPiece();
+        this.nextPiece = Game.createPiece();
+    }
+
     getState() {
         const { y: pieceY, x: pieceX, blocks } = this.activePiece;
         const playField = this.playField.map((arr) => arr.slice(0));
@@ -29,28 +39,13 @@ export default class Game {
         return {
             score: this.score,
             level: this.level,
-            lines: this.level,
+            lines: this.lines,
             nextPiece: this.nextPiece,
             playField,
-            isGameOver: this.topOut,
         };
     }
 
-    reset() {
-        this.score = 0;
-        this.lines = 0;
-        this.topOut = false;
-        this.playField = Game.createPlayField(); // 2d array 10*20 of zeros
-        this.activePiece = Game.createPiece();
-        this.nextPiece = Game.createPiece();
-    }
-
-    static createPlayField() {
-        return Array.from(Array(20), () => new Array(10).fill(0));
-    }
-
     static createPiece() {
-        const index = Math.floor(Math.random() * 7);
         const piece = {
             blocks: {
                 I: [
@@ -90,12 +85,8 @@ export default class Game {
                     [7, 7, 0],
                     [0, 7, 7],
                 ],
-            }['IJLOSTZ'[index]],
+            }['IJLOSTZ'[Math.floor(Math.random() * 7)]], // get random item
         };
-
-        if (!piece.blocks) {
-            throw new Error('Undefined piece!');
-        }
 
         piece.x = Math.floor((10 - piece.blocks[0].length) / 2);
         piece.y = -1;
@@ -103,7 +94,7 @@ export default class Game {
         return piece;
     }
 
-    movePieceLeft() {
+    moveLeft() {
         this.activePiece.x -= 1;
 
         if (this.hasCollision()) {
@@ -111,7 +102,7 @@ export default class Game {
         }
     }
 
-    movePieceRight() {
+    moveRight() {
         this.activePiece.x += 1;
 
 
@@ -120,7 +111,7 @@ export default class Game {
         }
     }
 
-    movePieceDown() {
+    moveDown() {
         if (this.topOut) {
             return;
         }
@@ -139,7 +130,7 @@ export default class Game {
         }
     }
 
-    rotatePiece() {
+    moveRotate() {
         this.rotateBlocks();
 
         if (this.hasCollision()) {
@@ -148,9 +139,7 @@ export default class Game {
     }
 
     rotateBlocks(clockwise = true) {
-        const { blocks } = this.activePiece;
-        const { length } = blocks;
-
+        const { blocks, blocks: { length } } = this.activePiece;
         const temp = Array.from(Array(length), () => new Array(length).fill(0));
 
         for (let y = 0; y < length; y += 1) {

@@ -38,12 +38,6 @@ export default class View {
         this.element.appendChild(this.canvas);
     }
 
-    renderMainScreen(state) {
-        this.clearScreen();
-        this.renderPlayField(state);
-        this.renderPanel(state);
-    }
-
     renderStartScreen() {
         this.context.fillStyle = 'white';
         this.context.font = '18px "Press Start 2P"';
@@ -63,7 +57,7 @@ export default class View {
         this.context.fillText('Press ENTER to Resume', this.width / 2, this.height / 2);
     }
 
-    renderEndScreen({ score }) {
+    renderEndScreen(score) {
         this.clearScreen();
 
         this.context.fillStyle = 'white';
@@ -75,11 +69,17 @@ export default class View {
         this.context.fillText('Press ENTER to Restart', this.width / 2, this.height / 2 + 48);
     }
 
+    renderMainScreen(state) {
+        this.clearScreen();
+        this.renderPlayField(state);
+        this.renderPanel(state);
+    }
+
     clearScreen() {
         this.context.clearRect(0, 0, this.width, this.height);
     }
 
-    renderPanel({ level, score, lines, nextPiece: { blocks } }) {
+    renderPanel({ score, lines, level, nextPiece: { blocks } }) {
         this.context.textAlign = 'start';
         this.context.textBaseline = 'top';
         this.context.fillStyle = 'white';
